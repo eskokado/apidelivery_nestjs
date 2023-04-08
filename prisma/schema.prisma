@@ -8,22 +8,25 @@ datasource db {
 }
 
 model Address {
-  id         BigInt   @id @default(autoincrement())
-  complement String?  @db.VarChar(100)
-  number     String   @db.VarChar(50)
-  zip_code   String   @db.VarChar(8)
+  id         BigInt  @id @default(autoincrement())
+  complement String? @db.VarChar(100)
+  number     String  @db.VarChar(50)
+  zip_code   String  @db.VarChar(8)
   client_id  BigInt?
   clients    Client? @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FKrf3c1s9gxxx0wubkv5maokv9y")
   orders     Order[]
 
   @@index([client_id], map: "FKrf3c1s9gxxx0wubkv5maokv9y")
+  @@map("addresses")
 }
 
 model Client {
-  id        BigInt      @id @default(autoincrement())
-  email     String      @unique(map: "UK_srv16ica2c1csub334bxjjb59") @db.VarChar(150)
-  name      String      @db.VarChar(150)
+  id        BigInt    @id @default(autoincrement())
+  email     String    @unique(map: "UK_srv16ica2c1csub334bxjjb59") @db.VarChar(150)
+  name      String    @db.VarChar(150)
   addresses Address[]
+
+  @@map("clients")
 }
 
 model OrderItem {
@@ -32,37 +35,43 @@ model OrderItem {
   quantity   Int?
   product_id BigInt
   order_id   BigInt
-  orders     Order   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FKbioxgbv59vetrxe0ejfubep1w")
-  products   Product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FKocimc7dtr037rh4ls4l95nlfi")
+  orders     Order    @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FKbioxgbv59vetrxe0ejfubep1w")
+  products   Product  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FKocimc7dtr037rh4ls4l95nlfi")
 
   @@id([order_id, product_id])
   @@index([product_id], map: "FKocimc7dtr037rh4ls4l95nlfi")
+  @@map("order_items")
 }
 
 model Order {
-  id                     BigInt        @id @default(autoincrement())
-  order_date             DateTime?     @db.DateTime(6)
+  id                     BigInt      @id @default(autoincrement())
+  order_date             DateTime?   @db.DateTime(6)
   state_delivery         Int?
   address_of_delivery_id BigInt?
   supplier_id            BigInt?
   order_items            OrderItem[]
   addresses              Address?    @relation(fields: [address_of_delivery_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK1capqbn2a8sdv25c9ly5ffl29")
-  suppliers              Supplier?    @relation(fields: [supplier_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FKg2540vs5sg5b0uov81t6p0229")
+  suppliers              Supplier?   @relation(fields: [supplier_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FKg2540vs5sg5b0uov81t6p0229")
 
   @@index([address_of_delivery_id], map: "FK1capqbn2a8sdv25c9ly5ffl29")
   @@index([supplier_id], map: "FKg2540vs5sg5b0uov81t6p0229")
+  @@map("orders")
 }
 
 model Product {
-  id          BigInt        @id @default(autoincrement())
-  name        String        @unique(map: "UK_o61fmio5yukmmiqgnxf8pnavn") @db.VarChar(150)
-  price       Decimal?      @default(0.00) @db.Decimal(10, 2)
+  id          BigInt      @id @default(autoincrement())
+  name        String      @unique(map: "UK_o61fmio5yukmmiqgnxf8pnavn") @db.VarChar(150)
+  price       Decimal?    @default(0.00) @db.Decimal(10, 2)
   order_items OrderItem[]
+
+  @@map("products")
 }
 
 model Supplier {
-  id     BigInt   @id @default(autoincrement())
-  email  String   @unique(map: "UK_q5uvp89ra4ksaty5ghyaw4kjr") @db.VarChar(150)
-  name   String   @db.VarChar(150)
+  id     BigInt  @id @default(autoincrement())
+  email  String  @unique(map: "UK_q5uvp89ra4ksaty5ghyaw4kjr") @db.VarChar(150)
+  name   String  @db.VarChar(150)
   orders Order[]
+
+  @@map("suppliers")
 }
