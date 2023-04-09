@@ -52,6 +52,7 @@ export class OrderService {
         error: 'Bad Request',
       };
     }
+    const viaCepData = zipCodeAddress;
     try {
       const orderCreated = await this.prisma.order.create({
         data: {
@@ -71,6 +72,7 @@ export class OrderService {
               ],
             },
           },
+          via_cep_data: viaCepData,
         },
       });
 
@@ -85,7 +87,9 @@ export class OrderService {
         },
       });
 
-      const resultData = JSON.parse(JSON.stringify(orderResult));
+      const resultData = orderResult;
+      resultData['via_cep_data'] = JSON.parse(resultData['via_cep_data']);
+
       this.logger.log('Order register with success!');
       return resultData;
     } catch (err) {
