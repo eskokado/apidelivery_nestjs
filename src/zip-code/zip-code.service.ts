@@ -14,6 +14,6 @@ export class ZipCodeService {
       return { error: errorMessage };
     }
     this.logger.log('Address found successfully!');
-    return result;
+    return JSON.stringify(result.data);
   }
 }
