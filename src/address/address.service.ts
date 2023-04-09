@@ -1,6 +1,5 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { addresses, PrismaClient } from "@prisma/client";
-import { PrismaService } from "../prisma/prisma.service";
+import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 
 interface error {
   error: string;
@@ -10,11 +9,12 @@ interface error {
 export class AddressService {
   private readonly logger = new Logger(AddressService.name);
 
-  constructor(private readonly prisma: PrismaService) {
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   async findByClientId(clienteId: number): Promise<any> {
-    const address = this.prisma.addresses.findFirst({ where: { client_id: clienteId } });
+    const address = this.prisma.address.findFirst({
+      where: { client_id: clienteId },
+    });
     this.logger.log(`client id: ${clienteId} - ${address}`);
     if (!address) {
       const errorMessage = `Address not fount with the client ID ${clienteId}`;
