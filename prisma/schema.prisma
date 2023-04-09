@@ -8,13 +8,13 @@ datasource db {
 }
 
 model Address {
-  id         Int  @id @default(autoincrement())
-  complement String? @db.VarChar(100)
-  number     String  @db.VarChar(50)
-  zip_code   String  @db.VarChar(8)
-  client_id  Int?
-  clients    Client? @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FKrf3c1s9gxxx0wubkv5maokv9y")
-  orders     Order[]
+  id            Int  @id @default(autoincrement())
+  complement    String? @db.VarChar(100)
+  number        String  @db.VarChar(50)
+  zip_code      String  @db.VarChar(8)
+  client_id     Int?
+  clients       Client? @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FKrf3c1s9gxxx0wubkv5maokv9y")
+  orders        Order[]
 
   @@index([client_id], map: "FKrf3c1s9gxxx0wubkv5maokv9y")
   @@map("addresses")
@@ -49,6 +49,7 @@ model Order {
   state_delivery         Int?
   address_of_delivery_id Int?
   supplier_id            Int?
+  via_cep_data           String? @db.Text
   order_items            OrderItem[]
   addresses              Address?    @relation(fields: [address_of_delivery_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK1capqbn2a8sdv25c9ly5ffl29")
   suppliers              Supplier?   @relation(fields: [supplier_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FKg2540vs5sg5b0uov81t6p0229")
