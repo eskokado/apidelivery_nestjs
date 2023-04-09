@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class SupplierService {
 
   async findById(id: number): Promise<any> {
     this.logger.log(`id: ${id}`);
-    const supplier = await this.prisma.suppliers.findFirst({
+    const supplier = await this.prisma.supplier.findFirst({
       where: { id: id },
     });
     this.logger.log(`id: ${id} - ${supplier}`);

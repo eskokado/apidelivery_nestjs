@@ -7,7 +7,7 @@ export class ProductService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findById(id: number): Promise<any> {
-    const product = await this.prisma.products.findFirst({
+    const product = await this.prisma.product.findFirst({
       where: { id },
     });
     this.logger.log(`id: ${id} - ${product}`);

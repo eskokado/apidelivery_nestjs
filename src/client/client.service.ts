@@ -7,7 +7,7 @@ export class ClientService {
   constructor(private readonly prisma: PrismaService){}
 
   async findById(id: number): Promise<any> {
-    const client = await this.prisma.clients.findUnique({
+    const client = await this.prisma.client.findUnique({
       where: { id },
     });
     if (!client) {
