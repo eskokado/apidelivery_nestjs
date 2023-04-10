@@ -5,14 +5,17 @@ import { Roles } from '../decorators/roles.decorator';
 import { Role } from '../enum/role.enum';
 import { RoleGuard } from '../guards/role.guard';
 import { AuthGuard } from '../guards/auth.guard';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('orders')
+@ApiBearerAuth()
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Roles(Role.ADMIN)
   @Post()
+  @ApiBody({ type: CreateOrderRequestDto })
   async create(@Body() obj: CreateOrderRequestDto) {
     const result = await this.orderService.create(obj);
     return { result };

@@ -11,9 +11,11 @@ import { AuthGuard } from '../guards/auth.guard';
 import { RoleGuard } from '../guards/role.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { Role } from '../enum/role.enum';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('products')
+@ApiBearerAuth()
 export class ProductController {
   private readonly logger = new Logger(ProductController.name);
 
