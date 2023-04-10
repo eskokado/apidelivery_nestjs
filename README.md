@@ -26,6 +26,23 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+The created API has the following requirements:
+
+- Create an item delivery.
+- Search for delivery of a specific item.
+- Search for deliveries by recipient or by sender.
+- Update status as delivered.
+- Cancel a delivery.
+- Consume another existing REST API to fetch data, such as neighborhood, street and geolocation, from zip code and number entered.
+- Authentication flow using bearer token.
+- Documentation using Swagger.
+
+This API allows you to manage item deliveries, allowing you to create, query and update the delivery status, as well as search for deliveries by recipient or sender. Furthermore, it consumes an external API to fetch additional information about delivery addresses.
+
+API security is ensured by an authentication flow, which requires the use of a valid authentication token to access protected resources.
+
+API documentation is provided by Swagger, making it easy to use and understand the features available in the API.
+
 ## Installation
 
 ```bash
