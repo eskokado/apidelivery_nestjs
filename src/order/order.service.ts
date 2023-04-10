@@ -21,6 +21,7 @@ interface error {
 @Injectable()
 export class OrderService {
   private readonly logger = new Logger(OrderService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly clientService: SupplierService,
@@ -108,6 +109,7 @@ export class OrderService {
       this.logger.error('Unable to update status');
     }
   }
+
   async updateOrderStatusToCancelled(id: number) {
     try {
       const orderCanceled = await this.prisma.order.update({
@@ -133,7 +135,7 @@ export class OrderService {
     }
   }
 
-  private async findOrderById(id: number) {
+  async findOrderById(id: number) {
     const orderResult = await this.prisma.order.findUnique({
       where: {
         id,
@@ -156,6 +158,45 @@ export class OrderService {
       resultData['state_delivery'],
     );
     resultData['via_cep_data'] = JSON.parse(resultData['via_cep_data']);
+    return resultData;
+  }
+
+  async findOrdersByTerm(term: string) {
+    const orderResult = await this.prisma.order.findMany({
+      where: {
+        OR: [
+          {
+            suppliers: {
+              name: {
+                contains: term,
+              },
+            },
+          },
+          {
+            addresses: {
+              clients: {
+                name: {
+                  contains: term,
+                },
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        suppliers: true,
+        addresses: { include: { clients: true } },
+        order_items: { include: { products: true } },
+      },
+    });
+    this.logger.log(`Term: ${term} - ${orderResult}`);
+
+    const resultData = orderResult;
+    resultData.map((rd) => {
+      rd['state_delivery'] = this.stateDelivery.toEnum(rd['state_delivery']);
+      rd['via_cep_data'] = JSON.parse(rd['via_cep_data']);
+    });
+
     return resultData;
   }
 }
