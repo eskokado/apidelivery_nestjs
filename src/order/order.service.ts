@@ -75,25 +75,87 @@ export class OrderService {
           via_cep_data: viaCepData,
         },
       });
-
-      const orderResult = await this.prisma.order.findUnique({
-        where: {
-          id: orderCreated.id,
-        },
-        include: {
-          suppliers: true,
-          addresses: { include: { clients: true } },
-          order_items: { include: { products: true } },
-        },
-      });
-
-      const resultData = orderResult;
-      resultData['via_cep_data'] = JSON.parse(resultData['via_cep_data']);
+      const resultData = await this.findOrderById(orderCreated.id);
 
       this.logger.log('Order register with success!');
       return resultData;
     } catch (err) {
       this.logger.error(err);
     }
+  }
+
+  async updateOrderStatusToDelivered(id: number) {
+    try {
+      const orderDelivered = await this.prisma.order.update({
+        data: {
+          state_delivery: this.stateDelivery.DELIVERED.code,
+        },
+        where: {
+          id,
+        },
+      });
+      if (!orderDelivered) {
+        const errorMessage = `Order not fount with the ID ${id}`;
+        this.logger.error(errorMessage);
+        return { error: errorMessage };
+      }
+
+      const resultData = await this.findOrderById(orderDelivered.id);
+
+      this.logger.log('Update status with success!');
+      return resultData;
+    } catch (err) {
+      this.logger.error('Unable to update status');
+    }
+  }
+  async updateOrderStatusToCancelled(id: number) {
+    try {
+      const orderCanceled = await this.prisma.order.update({
+        data: {
+          state_delivery: this.stateDelivery.CANCELED.code,
+        },
+        where: {
+          id,
+        },
+      });
+      if (!orderCanceled) {
+        const errorMessage = `Order not fount with the ID ${id}`;
+        this.logger.error(errorMessage);
+        return { error: errorMessage };
+      }
+
+      const resultData = await this.findOrderById(orderCanceled.id);
+
+      this.logger.log('Update status with success!');
+      return resultData;
+    } catch (err) {
+      this.logger.error('Unable to update status');
+    }
+  }
+
+  private async findOrderById(id: number) {
+    const orderResult = await this.prisma.order.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        suppliers: true,
+        addresses: { include: { clients: true } },
+        order_items: { include: { products: true } },
+      },
+    });
+    this.logger.log(`id: ${id} - ${orderResult}`);
+    if (!orderResult) {
+      const errorMessage = `Order not fount with the ID ${id}`;
+      this.logger.error(errorMessage);
+      return { error: errorMessage };
+    }
+
+    const resultData = orderResult;
+    resultData['state_delivery'] = this.stateDelivery.toEnum(
+      resultData['state_delivery'],
+    );
+    resultData['via_cep_data'] = JSON.parse(resultData['via_cep_data']);
+    return resultData;
   }
 }
