@@ -1,19 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserPojo } from './user.pojo';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly jwtService: JwtService,
-  ) {
-  }
+  constructor(private readonly jwtService: JwtService) {}
 
   async createToken(user: UserPojo) {
     const accessToken = this.jwtService.sign(
       {
         id: user.username,
+        role: user.role,
       },
       {
         expiresIn: '7 days',
@@ -26,7 +24,15 @@ export class AuthService {
   }
 
   async checkToken(token: string) {
-    //return this.jwtService.verify();
+    try {
+      const result = this.jwtService.verify(token, {
+        audience: 'users',
+        issuer: 'login',
+      });
+      return result;
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
   }
 
   async login(username: string, password) {
@@ -36,5 +42,14 @@ export class AuthService {
       return { error: 'Username unauthorized' };
     }
     return this.createToken(user);
+  }
+
+  async isValidToken(token: string) {
+    try {
+      await this.checkToken(token);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
