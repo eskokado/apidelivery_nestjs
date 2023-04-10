@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from "@nestjs/common";
 import { CreateOrderRequestDto } from './dto/create-order-request.dto';
 import { OrderService } from './order.service';
 
@@ -23,7 +23,7 @@ export class OrderController {
   }
 
   @Get('/search')
-  async search(@Param('term') term: string) {
+  async search(@Query('term') term: string) {
     const result = await this.orderService.findOrdersByTerm(term);
     return result;
   }
