@@ -8,6 +8,8 @@ import { ZipCodeModule } from '../zip-code/zip-code.module';
 import { AddressModule } from '../address/address.module';
 import { StateDeliveryModule } from '../enum/state-delivery.module';
 import { PrismaModule } from '../prisma/prisma.module';
+import { AuthService } from "../auth/auth.service";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
   imports: [
@@ -18,6 +20,7 @@ import { PrismaModule } from '../prisma/prisma.module';
     AddressModule,
     PrismaModule,
     StateDeliveryModule,
+    AuthModule,
   ],
   controllers: [OrderController],
   providers: [OrderService],
